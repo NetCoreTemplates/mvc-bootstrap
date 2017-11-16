@@ -1,2 +1,3 @@
 # mvc
-.NET Core 2.0 Empty MVC Website
+
+.NET Core 2.0 MVC Website
