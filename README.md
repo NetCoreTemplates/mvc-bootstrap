@@ -6,7 +6,7 @@
 
 > Browse [source code](https://github.com/NetCoreTemplates/mvc), view live demo [mvc.web-templates.io](http://mvc.web-templates.io) and install with [dotnet-new](http://docs.servicestack.net/dotnet-new):
 
-    $ npm install -g servicestack-cli
+    $ npm install -g @servicestack/cli
 
     $ dotnet-new mvc ProjectName
 
