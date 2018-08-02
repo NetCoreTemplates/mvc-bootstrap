@@ -1,0 +1,18 @@
+﻿@{
+    var menuItems = new Dictionary<string, string>
+    {
+        ["/"] = "Home",
+        ["/Home/About"] = "About",
+        ["/Home/Contact"] = "Contact",
+    };
+}
+
+<div class="collapse navbar-collapse" id="navbarResponsive">
+    <ul class="navbar-nav ml-auto">
+        @foreach (var item in menuItems) {
+            <li class="nav-item @(item.Key == Context.Request.Path ? " active" : "" )">
+                <a class="nav-link" href="@item.Key">@item.Value</a>
+            </li>
+        }
+    </ul>
+</div>
