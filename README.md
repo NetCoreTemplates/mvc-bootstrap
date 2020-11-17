@@ -1,6 +1,6 @@
 # mvc
 
-.NET Core 3.1 MVC Website with ServiceStack APIs
+.NET Core 5.0 MVC Website with ServiceStack APIs
 
 [![](https://raw.githubusercontent.com/ServiceStack/Assets/master/csharp-templates/mvc.png)](http://mvc.web-templates.io/)
 
