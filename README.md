@@ -1,6 +1,6 @@
 # mvc
 
-.NET 5.0 MVC Website with ServiceStack APIs
+.NET 6.0 MVC Website with ServiceStack APIs
 
 [![](https://raw.githubusercontent.com/ServiceStack/Assets/master/csharp-templates/mvc.png)](http://mvc.web-templates.io/)
 
