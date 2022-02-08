@@ -1,4 +1,12 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using ServiceStack;
+
+var builder = WebApplication.CreateBuilder(args);
+
+#if DEBUG
+builder.Services.AddMvc(options => options.EnableEndpointRouting = false).AddRazorRuntimeCompilation();
+#else
+builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
+#endif
 
 var app = builder.Build();
 
@@ -14,5 +22,13 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
+app.UseStaticFiles();
+app.UseServiceStack(new AppHost());
+app.UseMvc(routes =>
+{
+    routes.MapRoute(
+        name: "default",
+        template: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();
