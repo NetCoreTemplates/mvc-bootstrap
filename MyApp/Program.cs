@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
-using ServiceStack;
-using MyApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
