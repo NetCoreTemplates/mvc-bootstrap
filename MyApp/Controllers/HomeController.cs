@@ -1,37 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ServiceStack.Mvc;
 using MyApp.Models;
+using ServiceStack;
 
-namespace MyApp.Controllers
+namespace MyApp.Controllers;
+
+public class HomeController : ServiceStackController
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+
+    public HomeController(ILogger<HomeController> logger)
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _logger = logger;
+    }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
+    public IActionResult Index() => View();
 
-            return View();
-        }
+    public IActionResult Privacy() => View();
+    public async Task<IActionResult> Bookings()
+    {
+        var response = await Gateway.ApiAsync(new QueryBookings { 
+            OrderByDesc = nameof(Booking.Id),
+            Take = 10,
+        });
 
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
+        return View(response.Response);
+    }
 
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

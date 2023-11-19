@@ -1,0 +1,113 @@
+﻿@using MyApp.ServiceModel
+
+@model QueryResponse<Booking>
+@{
+    ViewData["Title"] = "Bookings";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="mt-5">
+    <table class="table table-striped">
+        <legend>Server Bookings</legend>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Room Type</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model.Results)
+            {
+                <tr>
+                    <th>@booking.Id</th>
+                    <th>@booking.Name</th>
+                    <th>@booking.RoomType</th>
+                    <th>@($"{booking.Cost:C2}")</th>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="bookings" class="mt-5">
+    <table class="table table-striped">
+        <legend>Client Bookings</legend>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Room Type</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody v-cloak>
+            <tr v-for="booking in bookings">
+                <th>{{booking.id}}</th>
+                <th>{{booking.name}}</th>
+                <th>{{booking.roomType}}</th>
+                <th>{{currency(booking.cost)}}</th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="module">
+import { ref, inject, onMounted } from "vue"
+import { mount } from "app.mjs"
+import { QueryBookings } from "dtos.mjs"
+
+const App = {
+    setup() {
+        const client = inject('client')
+        const bookings = ref([])
+        onMounted(async () => {
+            const api = await client.api(new QueryBookings({ orderByDesc:'id', take:10}))
+            if (api.succeeded) {
+                bookings.value = api.response.results
+            }
+        })
+
+        const currencyFmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' })
+        function currency(value) {
+            return currencyFmt.format(value)
+        }
+
+        return { bookings, currency }
+    }
+}
+mount('#bookings', App)
+</script>
+
+
+<div class="my-5 pt-5 mx-auto container" style="max-width:860px">
+
+    <div class="row">
+
+        <h3 class="mt-20 text-center">
+            Manage Bookings in
+            <a href="/locode/QueryBookings">Locode</a> or
+            <a href="/ui/QueryBookings">API Explorer</a>
+        </h3>
+
+        <div class="mt-20 mx-auto text-gray-500 max-w-screen-lg">
+            <h2 class="mt-4 text-3xl sm:text-4xl text-slate-900 font-extrabold tracking-tight dark:text-slate-50">
+                Create a multi-user Booking system in minutes
+            </h2>
+            <p class="my-3 mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl">
+                The Bookings APIs are built using
+                <a href="https://docs.servicestack.net/autoquery-crud">AutoQuery CRUD</a>,
+                allowing for rapid development of typed CRUD Services using only declarative POCO DTOs, enabling
+                developing entire
+                <a href="https://docs.servicestack.net/autoquery-crud#advanced-crud-example">audited</a>
+                &amp; <a href="https://docs.servicestack.net/autoquery-audit-log">verifiable</a>
+                data-driven systems in mins
+                <a href="https://docs.servicestack.net/autoquery-crud-bookings">more...</a>
+            </p>
+            <iframe class="mt-2" style="width:100%;aspect-ratio:16/9;" src="https://www.youtube.com/embed/rSFiikDjGos" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+
+    </div>
+
+</div>
