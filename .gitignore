@@ -6,7 +6,6 @@
 # Custom
 #dist/
 coverage/
-lib/
 App_Data/
 
 # User-specific files
