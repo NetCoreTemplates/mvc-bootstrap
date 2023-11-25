@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <PublishProfile>DefaultContainer</PublishProfile>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <UserSecretsId>aspnet-MyApp-c57f7ad5-8064-4feb-b394-dc5c7f54d822</UserSecretsId>
+        <PublishProfile>DefaultContainer</PublishProfile>
     </PropertyGroup>
     <ItemGroup>
         <Using Include="MyApp" />
