@@ -1,8 +1,10 @@
-using System.Text.Encodings.Web;
-using ServiceStack;
 using ServiceStack.Messaging;
-using MyApp.Data;
 using MyApp.ServiceInterface;
+using MyApp.ServiceModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using MyApp.Data;
+using ServiceStack;
 
 [assembly: HostingStartup(typeof(MyApp.ConfigureMq))]
 
@@ -24,34 +26,33 @@ public class ConfigureMq : IHostingStartup
             services.AddSingleton<IMessageService>(c => new BackgroundMqService());
         })
         .ConfigureAppHost(afterAppHostInit: appHost => {
-            appHost.Resolve<IMessageService>().Start();
             var mqService = appHost.Resolve<IMessageService>();
 
             //Register ServiceStack APIs you want to be able to invoke via MQ
             mqService.RegisterHandler<SendEmail>(appHost.ExecuteMessage);
+            mqService.Start();
         });
 }
 
-// This class is used by the application to send email for account confirmation and password reset.
-// For more details see https://go.microsoft.com/fwlink/?LinkID=532713
-public interface IEmailSender
+// Remove the "else if (EmailSender is IdentityNoOpEmailSender)" block from RegisterConfirmation.razor after updating with a real implementation.
+internal sealed class IdentityNoOpEmailSender : IEmailSender<ApplicationUser>
 {
-    Task SendEmailAsync(string email, string subject, string message);
-}
+    private readonly IEmailSender emailSender = new NoOpEmailSender();
 
-public static class EmailSenderExtensions
-{
-    public static Task SendEmailConfirmationAsync(this IEmailSender emailSender, string email, string link)
-    {
-        return emailSender.SendEmailAsync(email, "Confirm your email",
-            $"Please confirm your account by clicking this link: <a href='{HtmlEncoder.Default.Encode(link)}'>link</a>");
-    }
+    public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink) =>
+        emailSender.SendEmailAsync(email, "Confirm your email", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
+
+    public Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink) =>
+        emailSender.SendEmailAsync(email, "Reset your password", $"Please reset your password by <a href='{resetLink}'>clicking here</a>.");
+
+    public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode) =>
+        emailSender.SendEmailAsync(email, "Reset your password", $"Please reset your password using the following code: {resetCode}");
 }
 
 /// <summary>
 /// Sends emails by publishing a message to the Background MQ Server where it's processed in the background
 /// </summary>
-public class EmailSender(IMessageService messageService) : IEmailSender
+public class EmailSender(IMessageService messageService) : IEmailSender<ApplicationUser>
 {
     public Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
@@ -65,5 +66,13 @@ public class EmailSender(IMessageService messageService) : IEmailSender
 
         return Task.CompletedTask;
     }
-}
 
+    public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink) =>
+        SendEmailAsync(email, "Confirm your email", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
+
+    public Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink) =>
+        SendEmailAsync(email, "Reset your password", $"Please reset your password by <a href='{resetLink}'>clicking here</a>.");
+
+    public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode) =>
+        SendEmailAsync(email, "Reset your password", $"Please reset your password using the following code: {resetCode}");
+}

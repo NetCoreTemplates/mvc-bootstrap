@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MyApp.ServiceInterface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,32 +69,49 @@ services.ConfigureApplicationCookie(options =>
 });
 
 // Add application services.
-services.AddTransient<IEmailSender, EmailSender>();
+services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+// Uncomment to send emails with SMTP, configure SMTP with "SmtpConfig" in appsettings.json
+//services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+
+// Register all services
+services.AddServiceStack(typeof(MyServices).Assembly, c => {
+    c.AddSwagger(o => {
+        o.AddBasicAuth();
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
     app.UseHttpsRedirection();
 }
-else
-{
-    app.UseDeveloperExceptionPage();
-}
+
 app.UseStaticFiles();
 app.UseCookiePolicy();
 app.UseAuthentication();
-
-app.UseServiceStack(new AppHost());
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+app.UseServiceStack(new AppHost(), options => {
+    options.MapEndpoints();
+});
 
 app.Run();
