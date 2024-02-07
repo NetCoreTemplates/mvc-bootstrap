@@ -1,19 +1,12 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ServiceStack.Mvc;
 using MyApp.Models;
-using ServiceStack;
 
 namespace MyApp.Controllers;
 
-public class HomeController : ServiceStackController
+public class HomeController(ILogger<HomeController> logger) : ServiceStackController
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<HomeController> _logger = logger;
 
     public IActionResult Index() => View();
 
