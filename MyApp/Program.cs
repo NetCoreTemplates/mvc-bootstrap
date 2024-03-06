@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using MyApp.ServiceInterface;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,11 +16,6 @@ services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.Strict;
 });
 
-// $ dotnet ef migrations add CreateIdentitySchema
-// $ dotnet ef database update
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString, b => b.MigrationsAssembly(nameof(MyApp))));
 services.AddDatabaseDeveloperPageExceptionFilter();
 
 services.AddIdentity<ApplicationUser, IdentityRole>(options => {
