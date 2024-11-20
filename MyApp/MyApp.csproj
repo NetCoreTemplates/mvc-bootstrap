@@ -8,6 +8,10 @@
         <UserSecretsId>aspnet-MyApp-c57f7ad5-8064-4feb-b394-dc5c7f54d822</UserSecretsId>
         <PublishProfile>DefaultContainer</PublishProfile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <ContainerLabel Include="service" Value="my-app" />
+    </ItemGroup>
     <ItemGroup>
         <Using Include="MyApp" />
         <Using Include="MyApp.Data" />
