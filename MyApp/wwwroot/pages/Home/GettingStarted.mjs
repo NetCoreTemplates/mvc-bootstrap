@@ -6,7 +6,7 @@ export default {
         ShellCommand,
     },
     template:/*html*/`
-    <div class="d-flex flex-column" style="width:24rem;">
+    <div class="d-flex flex-column" style="width:26rem;">
         <h4 class="py-2 text-center text-xl">Create New Project</h4>
 
         <input type="text" v-model="project" autocomplete="off" spellcheck="false" @keydown="validateSafeName"
@@ -30,8 +30,7 @@ export default {
            </div>
         </section>
 
-      <ShellCommand class="mb-3">dotnet tool install -g x</ShellCommand>
-      <ShellCommand class="mb-3">x new {{template}} {{project}}</ShellCommand>
+      <ShellCommand class="mb-3">npx create-net new {{template}} {{project}}</ShellCommand>
 
       <h4 class="py-3 text-center fs-4">Run .NET Project (New Terminal)</h4>
       <ShellCommand class="mb-3">dotnet watch</ShellCommand>
